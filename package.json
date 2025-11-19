@@ -1,0 +1,30 @@
+{
+  "name": "log-manager",
+  "version": "1.0.0",
+  "description": "dicotec Logs Dashboard with API for saving and retrieving logs from diffrent Apps",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js",
+    "pm2:start": "pm2 start ecosystem.config.js",
+    "pm2:stop": "pm2 stop all",
+    "pm2:restart": "pm2 restart all",
+    "pm2:delete": "pm2 delete all",
+    "pm2:logs": "pm2 logs",
+    "pm2:status": "pm2 status"
+  },
+  "keywords": [
+    "logs",
+    "dashboard",
+    "api"
+  ],
+  "author": "mohamed Labide",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.20.2",
+    "pm2": "^5.3.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}

@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Action Logging - Test Suite</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            padding: 40px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .section {
+            margin-bottom: 40px;
+            padding-bottom: 30px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .section:last-child {
+            border-bottom: none;
+        }
+
+        h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .test-group {
+            margin-bottom: 20px;
+        }
+
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+
+        button:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        button.secondary {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        button.secondary:hover {
+            background: #e0e0e0;
+        }
+
+        button.success {
+            background: #28a745;
+        }
+
+        button.success:hover {
+            background: #218838;
+        }
+
+        button.danger {
+            background: #dc3545;
+        }
+
+        button.danger:hover {
+            background: #c82333;
+        }
+
+        .button-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .output {
+            background: #f5f5f5;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin-top: 15px;
+            border-radius: 4px;
+            font-size: 13px;
+            max-height: 300px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 3px;
+            font-size: 12px;
+            margin-left: 10px;
+        }
+
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .status.info {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .counter {
+            font-size: 24px;
+            font-weight: bold;
+            color: #667eea;
+            margin: 10px 0;
+        }
+
+        .config-box {
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        .config-box label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 13px;
+            color: #333;
+        }
+
+        .config-box input {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            width: 150px;
+            margin-right: 10px;
+        }
+
+        .info-box {
+            background: #e7f3ff;
+            border-left: 4px solid #2196F3;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+            font-size: 13px;
+        }
+
+        .info-box strong {
+            color: #1565c0;
+        }
+
+        a {
+            color: #667eea;
+            text-decoration: none;
+            border-bottom: 1px solid #667eea;
+        }
+
+        a:hover {
+            color: #764ba2;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .container {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 User Action Logging - Test Suite</h1>
+        <p class="subtitle">Test the user action logging and automatic cleanup features</p>
+
+        <!-- Configuration Section -->
+        <div class="section">
+            <h2>⚙️ Configuration</h2>
+            <div class="config-box">
+                <label>Batch Size: <input type="number" id="batchSize" value="5" min="1"></label>
+                <label>Batch Timeout (ms): <input type="number" id="batchTimeout" value="3000" min="100"></label>
+                <label>Log File: <input type="text" id="logFileName" value="test_actions"></label>
+                <button onclick="updateConfig()" class="secondary">Update Config</button>
+                <span id="configStatus"></span>
+            </div>
+
+            <div class="info-box">
+                <strong>📝 Configuration Info:</strong> These settings control how actions are batched before sending to the server.
+                Smaller batch size = more frequent sends. Longer timeout = waits more before auto-sending.
+            </div>
+        </div>
+
+        <!-- Single Log Tests -->
+        <div class="section">
+            <h2>📝 Single Log Tests</h2>
+            <p>Send individual logs immediately (good for important events)</p>
+            <div class="button-row">
+                <button onclick="testSingleLog('login')">👤 Log: User Login</button>
+                <button onclick="testSingleLog('error')">❌ Log: Error</button>
+                <button onclick="testSingleLog('success')">✅ Log: Success</button>
+                <button onclick="testSingleLog('custom')">⚡ Log: Custom Event</button>
+            </div>
+            <div id="singleOutput" class="output"></div>
+        </div>
+
+        <!-- Batch Logging Tests -->
+        <div class="section">
+            <h2>📦 Batch Logging Tests</h2>
+            <p>Queue multiple actions and send in batches (efficient for high-frequency events)</p>
+            
+            <div class="test-group">
+                <strong>Queue Actions:</strong>
+                <div class="button-row">
+                    <button onclick="queueSingleAction()">Queue 1 Click</button>
+                    <button onclick="queueMultipleActions(3)">Queue 3 Clicks</button>
+                    <button onclick="queueMultipleActions(10)">Queue 10 Clicks</button>
+                    <button onclick="queueMultipleActions(25)">Queue 25 Clicks</button>
+                    <button onclick="queueMultipleActions(50)">Queue 50 Clicks</button>
+                </div>
+                <div class="counter" id="queueCounter">Queue Size: 0</div>
+            </div>
+
+            <div class="test-group">
+                <strong>Flush Queue:</strong>
+                <div class="button-row">
+                    <button onclick="manualFlush()" class="success">Flush Remaining Actions</button>
+                    <button onclick="clearQueue()" class="secondary">Clear Queue (No Send)</button>
+                </div>
+            </div>
+
+            <div id="batchOutput" class="output"></div>
+        </div>
+
+        <!-- High-Volume Test -->
+        <div class="section">
+            <h2>🔥 High-Volume Test (100+ Actions)</h2>
+            <p>Simulate 100+ daily actions with efficient batching</p>
+            
+            <div class="button-row">
+                <button onclick="simulateHighVolume()" class="danger">Start High-Volume Test (50 actions)</button>
+                <button onclick="simulateHighVolume(100)" class="danger">Start High-Volume Test (100 actions)</button>
+            </div>
+
+            <div id="highVolumeOutput" class="output"></div>
+        </div>
+
+        <!-- Cleanup Tests -->
+        <div class="section">
+            <h2>🧹 Cleanup Tests</h2>
+            <p>Test automatic cleanup of logs older than 7 days</p>
+            
+            <div class="button-row">
+                <button onclick="triggerManualCleanup()" class="success">Trigger Manual Cleanup</button>
+                <button onclick="viewLogFiles()" class="secondary">View All Log Files</button>
+            </div>
+
+            <div id="cleanupOutput" class="output"></div>
+        </div>
+
+        <!-- Dashboard & Monitoring -->
+        <div class="section">
+            <h2>📊 Dashboard & Monitoring</h2>
+            <p>View logs and system status</p>
+            
+            <div class="button-row">
+                <button onclick="getAllLogs()" class="secondary">Get All Logs</button>
+                <button onclick="openDashboard()" class="secondary">Open Dashboard</button>
+                <button onclick="checkServerStatus()" class="secondary">Check Server Status</button>
+            </div>
+
+            <div id="monitoringOutput" class="output"></div>
+        </div>
+
+        <!-- Quick Reference -->
+        <div class="section">
+            <h2>📚 Quick Reference</h2>
+            <div class="info-box">
+                <strong>What This Tests:</strong><br>
+                ✓ Single log sends (immediate)<br>
+                ✓ Batch queuing and flushing<br>
+                ✓ High-volume logging (100+ actions)<br>
+                ✓ Automatic cleanup triggers<br>
+                ✓ Server connectivity<br><br>
+                <strong>How It Works:</strong><br>
+                • Queue actions with <code>queueAction()</code><br>
+                • Automatically sends when batch size reached or timeout expires<br>
+                • Can manually flush with <code>flushQueue()</code><br>
+                • Server automatically cleans logs older than 7 days<br><br>
+                <strong>Documentation:</strong><br>
+                📖 <a href="USER_ACTION_LOGGING_GUIDE.md" target="_blank">Full Guide</a> | 
+                📖 <a href="IMPLEMENTATION_SUMMARY.md" target="_blank">Implementation Summary</a> |
+                🌐 <a href="http://localhost:3000" target="_blank">View Dashboard</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="logClient.js"></script>
+    <script>
+        let logClient;
+        let queueSize = 0;
+
+        // Initialize on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            logClient = new LogClient('http://localhost:3000', {
+                batchSize: parseInt(document.getElementById('batchSize').value),
+                batchTimeoutMs: parseInt(document.getElementById('batchTimeout').value),
+                fileName: document.getElementById('logFileName').value
+            });
+            
+            logOutput('singleOutput', '✅ LogClient initialized. Ready to test!');
+            
+            // Flush queue before unload
+            window.addEventListener('beforeunload', () => {
+                if (queueSize > 0) {
+                    logClient.flushQueue();
+                }
+            });
+        });
+
+        function updateConfig() {
+            logClient = new LogClient('http://localhost:3000', {
+                batchSize: parseInt(document.getElementById('batchSize').value),
+                batchTimeoutMs: parseInt(document.getElementById('batchTimeout').value),
+                fileName: document.getElementById('logFileName').value
+            });
+            queueSize = 0;
+            updateQueueCounter();
+            const status = document.getElementById('configStatus');
+            status.innerHTML = '<span class="status success">✓ Config updated</span>';
+            setTimeout(() => { status.innerHTML = ''; }, 3000);
+        }
+
+        async function testSingleLog(type) {
+            const tests = {
+                login: { event: 'user_login', details: 'User logged in', level: 'info' },
+                error: { event: 'error_occurred', details: 'An error occurred during processing', level: 'error' },
+                success: { event: 'operation_success', details: 'Operation completed successfully', level: 'info' },
+                custom: { event: 'custom_event', details: 'Custom test event', level: 'info' }
+            };
+
+            const test = tests[type];
+            logOutput('singleOutput', `📤 Sending ${type.toUpperCase()} log...`);
+            
+            try {
+                const result = await logClient.sendLog({
+                    userName: 'test_user',
+                    companyId: 'TEST-COMP',
+                    event: test.event,
+                    details: test.details,
+                    level: test.level
+                }, document.getElementById('logFileName').value);
+                
+                logOutput('singleOutput', `✅ ${type.toUpperCase()} logged successfully!\n` + JSON.stringify(result, null, 2));
+            } catch (error) {
+                logOutput('singleOutput', `❌ Error: ${error.message}`);
+            }
+        }
+
+        async function queueSingleAction() {
+            try {
+                await logClient.queueAction({
+                    userName: 'test_user',
+                    companyId: 'TEST-COMP',
+                    event: 'test_click',
+                    details: `Click #${queueSize + 1}`,
+                    level: 'info'
+                });
+                
+                queueSize++;
+                updateQueueCounter();
+                logOutput('batchOutput', `📥 Action queued! (Queue size: ${queueSize})`);
+            } catch (error) {
+                logOutput('batchOutput', `❌ Error: ${error.message}`);
+            }
+        }
+
+        async function queueMultipleActions(count) {
+            logOutput('batchOutput', `📥 Queueing ${count} actions...`);
+            
+            for (let i = 0; i < count; i++) {
+                try {
+                    await logClient.queueAction({
+                        userName: 'test_user',
+                        companyId: 'TEST-COMP',
+                        event: 'test_click',
+                        details: `Click #${queueSize + i + 1}`,
+                        level: 'info'
+                    });
+                    
+                    // Show progress every 10 actions
+                    if ((i + 1) % 10 === 0) {
+                        updateQueueCounter();
+                        logOutput('batchOutput', `📥 Queued ${i + 1}/${count} actions... (Queue size: ${queueSize + i + 1})`);
+                    }
+                } catch (error) {
+                    logOutput('batchOutput', `❌ Error on action ${i + 1}: ${error.message}`);
+                    break;
+                }
+            }
+            
+            queueSize += count;
+            updateQueueCounter();
+            logOutput('batchOutput', `✅ Queued ${count} actions! Total queue size: ${queueSize}\n💡 Will auto-flush when batch size reached or timeout expires.`);
+        }
+
+        async function manualFlush() {
+            if (queueSize === 0) {
+                logOutput('batchOutput', '⚠️ Queue is empty. Nothing to flush.');
+                return;
+            }
+
+            logOutput('batchOutput', `📤 Flushing ${queueSize} actions...`);
+            
+            try {
+                await logClient.flushQueue();
+                logOutput('batchOutput', `✅ Flushed ${queueSize} actions successfully!`);
+                queueSize = 0;
+                updateQueueCounter();
+            } catch (error) {
+                logOutput('batchOutput', `❌ Error: ${error.message}`);
+            }
+        }
+
+        function clearQueue() {
+            if (queueSize === 0) {
+                logOutput('batchOutput', '⚠️ Queue is empty.');
+                return;
+            }
+
+            logClient.actionQueue = [];
+            queueSize = 0;
+            updateQueueCounter();
+            logOutput('batchOutput', `🗑️ Queue cleared without sending.`);
+        }
+
+        async function simulateHighVolume(count = 50) {
+            logOutput('highVolumeOutput', `🔥 Simulating ${count} high-frequency user actions...`);
+            
+            for (let i = 0; i < count; i++) {
+                try {
+                    await logClient.queueAction({
+                        userName: 'test_user',
+                        companyId: 'TEST-COMP',
+                        event: 'user_interaction',
+                        details: `Action #${i + 1} - simulated click/scroll/input`,
+                        level: 'info'
+                    });
+
+                    if ((i + 1) % 10 === 0) {
+                        logOutput('highVolumeOutput', `⚙️ Processed ${i + 1}/${count} actions... (Queue batching in progress)`);
+                    }
+                } catch (error) {
+                    logOutput('highVolumeOutput', `❌ Error on action ${i + 1}: ${error.message}`);
+                    break;
+                }
+            }
+
+            logOutput('highVolumeOutput', `✅ Simulated ${count} actions!\n💡 Batches are being sent automatically. Check server console for batch sends.\n⏱️ Remaining actions will flush on page unload or when batch size is reached.`);
+        }
+
+        async function triggerManualCleanup() {
+            logOutput('cleanupOutput', '🧹 Triggering manual cleanup...');
+            
+            try {
+                const result = await logClient.cleanupOldLogs();
+                logOutput('cleanupOutput', `✅ Cleanup completed!\n${JSON.stringify(result, null, 2)}`);
+            } catch (error) {
+                logOutput('cleanupOutput', `❌ Error: ${error.message}`);
+            }
+        }
+
+        async function viewLogFiles() {
+            logOutput('cleanupOutput', '📋 Fetching log files list...');
+            
+            try {
+                const result = await logClient.getLogFilesList();
+                logOutput('cleanupOutput', `📊 Log Files:\n${JSON.stringify(result, null, 2)}`);
+            } catch (error) {
+                logOutput('cleanupOutput', `❌ Error: ${error.message}`);
+            }
+        }
+
+        async function getAllLogs() {
+            logOutput('monitoringOutput', '📥 Fetching all logs...');
+            
+            try {
+                const logs = await logClient.getAllLogs();
+                logOutput('monitoringOutput', `📊 Total logs: ${logs.length}\n${JSON.stringify(logs.slice(0, 5), null, 2)}${logs.length > 5 ? '\n... and ' + (logs.length - 5) + ' more logs' : ''}`);
+            } catch (error) {
+                logOutput('monitoringOutput', `❌ Error: ${error.message}`);
+            }
+        }
+
+        async function checkServerStatus() {
+            logOutput('monitoringOutput', '🔍 Checking server status...');
+            
+            try {
+                const response = await fetch('http://localhost:3000/api/logs');
+                if (response.ok) {
+                    logOutput('monitoringOutput', `✅ Server is running and responding!\n🌐 API: http://localhost:3000\n📊 Dashboard: http://localhost:3000`);
+                } else {
+                    logOutput('monitoringOutput', `⚠️ Server responded with status: ${response.status}`);
+                }
+            } catch (error) {
+                logOutput('monitoringOutput', `❌ Cannot connect to server: ${error.message}\n⚠️ Make sure server is running on http://localhost:3000`);
+            }
+        }
+
+        function openDashboard() {
+            window.open('http://localhost:3000', '_blank');
+        }
+
+        function logOutput(elementId, message) {
+            const element = document.getElementById(elementId);
+            element.textContent += (element.textContent ? '\n\n---\n\n' : '') + message;
+            element.scrollTop = element.scrollHeight;
+        }
+
+        function updateQueueCounter() {
+            document.getElementById('queueCounter').textContent = `Queue Size: ${queueSize}`;
+        }
+    </script>
+</body>
+</html>

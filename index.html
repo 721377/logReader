@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Planner Logs Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <i class="fas fa-chart-line"></i>
+                <h1>Planner Logs Dashboard</h1>
+            </div>
+            <div class="stats">
+                <div class="stat-card">
+                    <div class="number" id="total-logs">0</div>
+                    <div class="label">Total Logs</div>
+                </div>
+                <div class="stat-card">
+                    <div class="number" id="filtered-logs">0</div>
+                    <div class="label">Filtered Logs</div>
+                </div>
+                <div class="stat-card">
+                    <div class="number" id="last-update">-</div>
+                    <div class="label">Last Updated</div>
+                </div>
+            </div>
+        </header>
+
+        <div class="controls">
+            <div class="filter-group">
+                <h3><i class="fas fa-upload"></i> Upload Logs</h3>
+                <div class="input-group">
+                    <label for="file-upload">Select JSON File</label>
+                    <input type="file" id="file-upload" accept=".json" placeholder="Choose a JSON file">
+                </div>
+                <div class="actions">
+                    <button class="btn btn-primary" id="upload-btn">
+                        <i class="fas fa-cloud-upload-alt"></i> Upload
+                    </button>
+                </div>
+                <div id="upload-status" style="margin-top: 10px;"></div>
+            </div>
+
+            <div class="filter-group">
+                <h3><i class="fas fa-filter"></i> Filters</h3>
+                <div class="input-group">
+                    <label for="user-filter">User Name</label>
+                    <input type="text" id="user-filter" placeholder="Filter by user name">
+                </div>
+                <div class="input-group">
+                    <label for="company-filter">Company ID</label>
+                    <input type="text" id="company-filter" placeholder="Filter by company ID">
+                </div>
+                <div class="input-group">
+                    <label for="level-filter">Log Level</label>
+                    <select id="level-filter">
+                        <option value="">All Levels</option>
+                        <option value="info">Info</option>
+                        <option value="warning">Warning</option>
+                        <option value="error">Error</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="filter-group">
+                <h3><i class="fas fa-calendar-alt"></i> Date Range</h3>
+                <div class="input-group">
+                    <label for="date-from">From</label>
+                    <input type="date" id="date-from">
+                </div>
+                <div class="input-group">
+                    <label for="date-to">To</label>
+                    <input type="date" id="date-to">
+                </div>
+                <div class="actions">
+                    <button class="btn btn-primary" id="apply-filters">
+                        <i class="fas fa-check"></i> Apply Filters
+                    </button>
+                    <button class="btn btn-outline" id="clear-filters">
+                        <i class="fas fa-times"></i> Clear
+                    </button>
+                </div>
+            </div>
+
+            <div class="filter-group">
+                <h3><i class="fas fa-search"></i> Search</h3>
+                <div class="input-group">
+                    <label for="search">Search in Event/Details</label>
+                    <input type="text" id="search" placeholder="Search logs...">
+                </div>
+                <div class="actions">
+                    <button class="btn btn-primary" id="search-btn">
+                        <i class="fas fa-search"></i> Search
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="logs-container">
+            <div class="logs-header">
+                <h2>Application Logs</h2>
+                <div class="logs-actions">
+                    <div class="refresh-indicator">
+                        <div class="spinner" id="refresh-spinner"></div>
+                        <span>Auto-refresh: 15s</span>
+                    </div>
+                    <button class="btn btn-outline" id="export-btn">
+                        <i class="fas fa-download"></i> Export
+                    </button>
+                    <button class="btn btn-primary" id="refresh-btn">
+                        <i class="fas fa-sync-alt"></i> Refresh
+                    </button>
+                </div>
+            </div>
+            <div id="logs-content">
+                <!-- Logs will be populated here by JavaScript -->
+                <div class="no-logs">
+                    <i class="fas fa-inbox"></i>
+                    <p>No logs available. Click refresh to load logs.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for log details -->
+    <div class="modal" id="log-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Log Details</h3>
+                <button class="close-btn" id="close-modal">&times;</button>
+            </div>
+            <div class="modal-body" id="modal-body">
+                <!-- Log details will be populated here -->
+            </div>
+        </div>
+    </div>
+
+    <script src="dashboard.js"></script>
+</body>
+</html>
