@@ -5,6 +5,7 @@
     --info: #4895ef;
     --warning: #f8961e;
     --error: #f72585;
+    
     --light: #f8f9fa;
     --dark: #212529;
     --gray: #6c757d;
@@ -425,3 +426,57 @@ header {
     font-size: 12px;
     line-height: 1.4;
 }
+
+
+.file-picker {
+  display: inline-block;
+  padding: 10px 16px;
+  border: 1px dashed #dcdcdc;
+  border-radius: 8px;
+  font-family: sans-serif;
+  font-size: 14px;
+  color: #111;
+  background: #fff;
+  cursor: pointer;
+  transition: 0.2s ease;
+  text-align: center;
+}
+
+/* hover + active states */
+.file-picker:hover {
+  background: #cbd4ff;
+  border : 1px dashed #4361ee;
+}
+.file-picker:active {
+  background: #4361ee;
+}
+
+/* hide the native file input */
+.file-picker input[type="file"] {
+  display: none;
+}
+#fileDscr{
+    font-size: 12px;
+    color: #2f2f2f;
+    margin: 2px;
+}
+#upload-status{
+     font-size: 14px;
+            margin-top: 12px;
+            padding: 8px 12px;
+            border-radius: 6px;
+}
+   .success {
+     background: rgb(70 237 76 / 14%);
+    color: #6ec37d;
+    border: 1px solid rgba(76, 201, 240, 0.3);
+    /* width: 100%; */
+    padding: 10px;
+    border-radius: 8px;
+        }
+
+        .error {
+            background: rgba(230, 57, 70, 0.1);
+            color: var(--error);
+            border: 1px solid rgba(230, 57, 70, 0.3);
+        }

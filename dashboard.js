@@ -428,6 +428,8 @@ function handleFileUpload() {
     const fileInput = document.getElementById('file-upload');
     const file = fileInput.files[0];
     const statusDiv = document.getElementById('upload-status');
+    const fileDscr = document.getElementById('fileDscr');
+    fileDscr.innerHTML = '';
     
     if (!file) {
         statusDiv.innerHTML = '<span style="color: orange;"><i class="fas fa-exclamation-triangle"></i> Please select a file</span>';
@@ -435,12 +437,14 @@ function handleFileUpload() {
     }
     
     if (!file.name.endsWith('.json')) {
-        statusDiv.innerHTML = '<span style="color: red;"><i class="fas fa-times-circle"></i> Please select a valid JSON file</span>';
+        statusDiv.innerHTML = '<span class="error"><i class="fas fa-times-circle"></i> Please select a valid JSON file</span>';
         return;
     }
     
     statusDiv.innerHTML = '<span style="color: blue;"><i class="fas fa-spinner fa-spin"></i> Uploading...</span>';
     
+
+    fileDscr.innerHTML = `<strong>File Name:</strong> ${file.name}`;
     const reader = new FileReader();
     reader.onload = (event) => {
         try {
@@ -461,36 +465,37 @@ function handleFileUpload() {
     reader.readAsText(file);
 }
 
-// Upload logs to server
-async function uploadLogs(jsonData) {
+// Upload logs to browser storage (client-side only)
+function uploadLogs(jsonData) {
     const statusDiv = document.getElementById('upload-status');
     
     try {
-        const response = await fetch('/api/logs/upload', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ logsData: jsonData })
-        });
+        let logsArray = Array.isArray(jsonData) ? jsonData : [jsonData];
         
-        const result = await response.json();
-        
-        if (response.ok && result.success) {
-            statusDiv.innerHTML = `<span style="color: green;"><i class="fas fa-check-circle"></i> Successfully uploaded ${result.count} logs</span>`;
-            
-            // Clear the file input
-            document.getElementById('file-upload').value = '';
-            
-            // Reload logs after a short delay to ensure they're saved
-            setTimeout(() => {
-                fetchLogs();
-            }, 500);
-        } else {
-            statusDiv.innerHTML = `<span style="color: red;"><i class="fas fa-times-circle"></i> Error: ${result.error || 'Upload failed'}</span>`;
+        if (logsArray.length === 0) {
+            statusDiv.innerHTML = '<span style="color: red;"><i class="fas fa-times-circle"></i> No valid logs found in file</span>';
+            return;
         }
+        
+        // Merge with existing logs (mergeLogs will normalize them)
+        mergeLogs(logsArray);
+        
+        // Save to browser storage
+        saveLogsToStorage();
+        
+        statusDiv.innerHTML = `<span class="success"><i class="fas fa-check-circle"></i> Successfully loaded ${logsArray.length} logs</span>`;
+        
+        // Clear the file input
+        document.getElementById('file-upload').value = '';
+        
+        // Update display
+        updateStats();
+        applyFilters();
+        
+        // Update last update time
+        lastUpdateElement.textContent = new Date().toLocaleTimeString();
     } catch (error) {
-        statusDiv.innerHTML = `<span style="color: red;"><i class="fas fa-times-circle"></i> Error uploading logs: ${error.message}</span>`;
+        statusDiv.innerHTML = `<span style="color: red;"><i class="fas fa-times-circle"></i> Error processing logs: ${error.message}</span>`;
         console.error('Upload error:', error);
     }
 }

@@ -327,63 +327,6 @@ const server = http.createServer(async (req, res) => {
             res.end(JSON.stringify(cleanupResult));
             return;
         }
-
-        // POST /api/logs/upload - Upload and process JSON logs from file
-        if (req.method === 'POST' && pathname === '/api/logs/upload') {
-            const body = await parseBody(req);
-            const { logsData } = body;
-            
-            if (!logsData) {
-                res.writeHead(400, { 'Content-Type': 'application/json' });
-                res.end(JSON.stringify({ error: 'logsData is required' }));
-                return;
-            }
-            
-            try {
-                // Parse logs data (can be array or single object)
-                let logsArray = Array.isArray(logsData) ? logsData : [logsData];
-                
-                // Validate that we have actual logs
-                if (logsArray.length === 0) {
-                    res.writeHead(400, { 'Content-Type': 'application/json' });
-                    res.end(JSON.stringify({ error: 'No valid logs found in data' }));
-                    return;
-                }
-                
-                // Add logs to in-memory storage
-                allLogs.push(...logsArray);
-                
-                // Sort logs by timestamp (newest first)
-                allLogs.sort((a, b) => {
-                    const aTime = new Date(a.timestamp || 0).getTime();
-                    const bTime = new Date(b.timestamp || 0).getTime();
-                    return bTime - aTime;
-                });
-                
-                // Save uploaded logs to a file
-                const uploadFileName = `uploaded_${Date.now()}`;
-                const sanitizedFileName = uploadFileName.replace(/[^a-zA-Z0-9_-]/g, '_');
-                const filePath = path.join(logDir, `${sanitizedFileName}.json`);
-                fs.writeFileSync(filePath, JSON.stringify(logsArray, null, 2), 'utf-8');
-                
-                res.writeHead(200, { 'Content-Type': 'application/json' });
-                res.end(JSON.stringify({ 
-                    success: true, 
-                    message: `Successfully uploaded ${logsArray.length} logs`,
-                    count: logsArray.length,
-                    fileName: `${sanitizedFileName}.json`
-                }));
-                return;
-            } catch (error) {
-                console.error('Error processing upload:', error);
-                res.writeHead(500, { 'Content-Type': 'application/json' });
-                res.end(JSON.stringify({ 
-                    error: 'Error processing logs', 
-                    details: error.message 
-                }));
-                return;
-            }
-        }
         
         // Serve static files
         if (pathname === '/') {
