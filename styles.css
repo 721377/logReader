@@ -9,7 +9,7 @@
     --light: #f8f9fa;
     --dark: #212529;
     --gray: #6c757d;
-    --light-gray: #e9ecef;
+    --light-gray: #e5e7e9;
     --border-radius: 8px;
     --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     --transition: all 0.3s ease;
@@ -20,6 +20,7 @@
     padding: 0;
     box-sizing: border-box;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    text-decoration: none;
 }
 
 body {
@@ -28,6 +29,56 @@ body {
     line-height: 1.6;
 }
 
+headerm{
+    position: relative;
+    background-color: #fff;
+    width: 100%;
+    height: 70px;
+    padding: 0 20px;
+    margin-bottom: 7px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid #ececec;
+    border-bottom-left-radius: 20px;
+     border-bottom-right-radius: 20px;
+}
+headerm .logo{
+    font-size: 25px;
+    letter-spacing: 1px;
+    color: #4361ee;
+}
+headerm>nav{
+    position: relative;
+    width: 40%;
+    display: flex;
+    align-items: center;
+    justify-content: end;
+    gap: 8px;
+    margin-right: 20px;
+}
+headerm>nav>.navtag{
+    padding: 7px;
+    font-size: 15px;
+    color:#3e3e3e;
+    border: 1px solid #dbdbdb;border-radius: 16px;
+    cursor: pointer;
+    transition: 0.3s ease-in-out;
+
+}
+headerm>nav>.navtag i{
+    font-size: 16px;
+    color: #3e3e3e;
+    margin-right: 6px;
+}
+headerm>nav>.navtag:hover{
+    color: #f5f7fb;
+    background-color: #4361ee;
+    border: 1px solid #fff;
+}
+headerm>nav>.navtag:hover i{
+    color: #f5f7fb;
+}
 .container {
     max-width: 1400px;
     margin: 0 auto;
@@ -214,12 +265,12 @@ header {
     font-weight: 600;
     font-size: 14px;
     color: var(--gray);
-    border-bottom: 1px solid var(--light-gray);
+    border: 1px solid var(--light-gray);
 }
 
 .logs-table td {
     padding: 12px 15px;
-    border-bottom: 1px solid var(--light-gray);
+    border: 1px solid var(--light-gray);
     font-size: 14px;
 }
 
@@ -228,9 +279,11 @@ header {
 }
 
 .logs-table tr:hover {
-    background-color: #f8f9fa;
+    background-color: #f8fbfe;
 }
-
+.logs-table tr:hover td{
+    border: none;
+}
 .date-header {
     background-color: var(--light);
     padding: 10px 15px;

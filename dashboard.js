@@ -58,7 +58,7 @@ document.addEventListener('DOMContentLoaded', function() {
     setupEventListeners();
     
     // Start auto-refresh
-    startAutoRefresh();
+    // startAutoRefresh();
     
     // Fetch initial logs
     fetchLogs();
@@ -501,10 +501,10 @@ function uploadLogs(jsonData) {
 }
 
 // Start auto-refresh
-function startAutoRefresh() {
-    // Refresh every 15 seconds
-    refreshInterval = setInterval(fetchLogs, 15000);
-}
+// function startAutoRefresh() {
+//     // Refresh every 15 seconds
+//     refreshInterval = setInterval(fetchLogs, 15000);
+// }
 
 // Format timestamp for display
 function formatTimestamp(timestamp) {

@@ -1,0 +1,971 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Planner Logs Dashboard | Documentation</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3f37c9;
+            --white: #fff;
+            --light-gray: #f8f9fa;
+            --medium-gray: #e5e7e9;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+               text-decoration: none;
+        }
+        
+        body {
+            background-color: var(--light-gray);
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            display: flex;
+            max-width: 1200px;
+            margin: 0 auto;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            min-height: 100vh;
+        }
+        
+        /* Sidebar Navigation */
+        .sidebar {
+            width: 250px;
+            background-color: var(--white);
+            border-right: 1px solid var(--medium-gray);
+            padding: 20px 0;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+        }
+        
+        .logo {
+            padding: 0 20px 20px;
+            border-bottom: 1px solid var(--medium-gray);
+            margin-bottom: 20px;
+        }
+        
+        .logo h1 {
+            color: var(--primary);
+            font-size: 1.5rem;
+        }
+        
+        .nav-links {
+            list-style: none;
+        }
+        
+        .nav-links li {
+            margin-bottom: 5px;
+        }
+        
+        .nav-links a {
+            display: block;
+            padding: 10px 20px;
+            text-decoration: none;
+            color: #555;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-links a:hover {
+            background-color: var(--light-gray);
+            color: var(--primary);
+        }
+        
+        .nav-links a.active {
+            background-color: var(--primary);
+            color: var(--white);
+        }
+        
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: 30px;
+            background-color: var(--white);
+        }
+        
+        .section {
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--medium-gray);
+        }
+        
+        .section:last-child {
+            border-bottom: none;
+        }
+        
+        .section h2 {
+            color: var(--primary);
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--medium-gray);
+        }
+        
+        .section h3 {
+            color: var(--secondary);
+            margin: 20px 0 10px;
+        }
+        
+        .section p {
+            margin-bottom: 15px;
+        }
+        
+        .code-block {
+            background-color: #2d2d2d;
+            color: #f8f8f2;
+            border-left: 4px solid var(--primary);
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 5px 5px 0;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+            font-size: 13px;
+            line-height: 1.4;
+        }
+        
+        .code-block .string { color: #a6e22e; }
+        .code-block .key { color: #66d9ef; }
+        .code-block .number { color: #ae81ff; }
+        .code-block .bracket { color: #f8f8f2; }
+        
+        .api-endpoint {
+            display: grid;
+            grid-template-columns: 80px 1fr;
+            gap: 15px;
+            margin: 20px 0;
+            background-color: var(--light-gray);
+            padding: 15px;
+            border-radius: 5px;
+            border-left: 4px solid var(--primary);
+        }
+        
+        .method {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 3px;
+            font-weight: bold;
+            font-size: 12px;
+            color: white;
+        }
+        
+        .method-get {
+            background-color: #61affe;
+        }
+        
+        .method-post {
+            background-color: #49cc90;
+        }
+        
+        .method-delete {
+            background-color: #f93e3e;
+        }
+        
+        .json-example {
+            background-color: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            overflow-x: auto;
+        }
+        
+        .table-responsive {
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: var(--white);
+        }
+        
+        table th {
+            background-color: var(--primary);
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+        }
+        
+        table td {
+            padding: 12px;
+            border-bottom: 1px solid var(--medium-gray);
+        }
+        
+        table tr:hover {
+            background-color: var(--light-gray);
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 3px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .badge-required {
+            background-color: rgba(249, 62, 62, 0.2);
+            color: #f93e3e;
+        }
+        
+        .badge-optional {
+            background-color: rgba(97, 175, 254, 0.2);
+            color: #61affe;
+        }
+        
+        .header-with-icon {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .header-with-icon i {
+            color: var(--primary);
+            font-size: 1.3em;
+        }
+        
+        .step {
+            display: flex;
+            margin-bottom: 20px;
+            background-color: var(--light-gray);
+            padding: 15px;
+            border-radius: 5px;
+        }
+        
+        .step-number {
+            background-color: var(--primary);
+            color: var(--white);
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+        
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .feature-card {
+            background-color: var(--light-gray);
+            padding: 20px;
+            border-radius: 5px;
+            border-top: 3px solid var(--primary);
+        }
+        
+        .feature-card h4 {
+            color: var(--secondary);
+            margin-bottom: 10px;
+        }
+        
+        .note {
+            background-color: rgba(67, 97, 238, 0.1);
+            border-left: 4px solid var(--primary);
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 5px 5px 0;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+            }
+            
+            .main-content {
+                padding: 20px;
+            }
+        }
+        headerm{
+    position: relative;
+    background-color: #fff;
+    width: 100%;
+    height: 70px;
+    padding: 0 20px;
+    margin-bottom: 7px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid #ececec;
+    border-bottom-left-radius: 20px;
+     border-bottom-right-radius: 20px;
+}
+headerm .logorm{
+    font-size: 25px;
+    letter-spacing: 1px;
+    color: #4361ee;
+}
+headerm>nav{
+    position: relative;
+    width: 40%;
+    display: flex;
+    align-items: center;
+    justify-content: end;
+    gap: 8px;
+    margin-right: 20px;
+}
+headerm>nav>.navtag{
+    padding: 7px;
+    font-size: 15px;
+    color:#3e3e3e;
+    border: 1px solid #dbdbdb;border-radius: 16px;
+    cursor: pointer;
+    transition: 0.3s ease-in-out;
+
+}
+headerm>nav>.navtag i{
+    font-size: 16px;
+    color: #3e3e3e;
+    margin-right: 6px;
+}
+headerm>nav>.navtag:hover{
+    color: #f5f7fb;
+    background-color: #4361ee;
+    border: 1px solid #fff;
+}
+headerm>nav>.navtag:hover i{
+    color: #f5f7fb;
+}
+    </style>
+</head>
+<body>
+
+     <headerm>
+        <a href="index.html" class="logorm">
+            LOgManaGer
+        </a>
+        <nav>
+        <a href="documentation.html" class="navtag doc"><i class="fa-solid fa-file-code"></i> Documentation</a>
+           <a href="documentation.html#api-reference" class="navtag api"><i class="fa-solid fa-code"></i> Api</a>
+            <div class="navtag supp"><i class="fa-solid fa-headset"></i> Supports</div>
+
+
+        </nav>
+    </headerm>
+    <div class="container">
+        <!-- Sidebar Navigation -->
+        <div class="sidebar">
+            <div class="logo">
+                <h1><i class="fas fa-chart-line"></i> Logs Docs</h1>
+            </div>
+            <ul class="nav-links">
+                <li><a href="#introduction" class="active">Introduction</a></li>
+                <li><a href="#how-to-use">How to Use</a></li>
+                <li><a href="#upload-json">Upload JSON Files</a></li>
+                <li><a href="#json-format">JSON Format</a></li>
+                <li><a href="#api-reference">API Reference</a></li>
+                <li><a href="#filtering">Filtering & Search</a></li>
+                <li><a href="#faq">FAQ</a></li>
+            </ul>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="section" id="introduction">
+                <h2><i class="fas fa-info-circle"></i> Introduction</h2>
+                <p>Welcome to the <strong>LogManager Dashboard</strong> documentation. This comprehensive guide will help you understand how to use all features of the platform.</p>
+                <p>The Logs Dashboard is a powerful tool for managing, visualizing, and analyzing application logs in real-time. It provides features for uploading JSON logs, filtering, searching, exporting, and viewing detailed log information with advanced analytics.</p>
+                
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <h4><i class="fas fa-file-upload"></i> JSON Upload</h4>
+                        <p>Upload log files directly from your browser. No backend required - all processing happens client-side.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h4><i class="fas fa-file-upload"></i> Soon JSON Upload Via API</h4>
+                        <p>Upload log files directly from the applications. using the LogManager APIS.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h4><i class="fas fa-search"></i> Advanced Filtering</h4>
+                        <p>Filter logs by user, company, level, date range, and search by event/details.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h4><i class="fas fa-download"></i> Export Data</h4>
+                        <p>Export filtered or all logs as JSON files for further analysis.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h4><i class="fas fa-bar-chart"></i> Real-time Stats</h4>
+                        <p>View statistics including total logs count and filtered logs count.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="section" id="how-to-use">
+                <h2><i class="fas fa-cogs"></i> How to Use the Platform</h2>
+                
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div>
+                        <h3>Access the Dashboard</h3>
+                        <p>Open the Logs Dashboard in your browser. The interface shows a statistics header with total logs and filtered logs count, plus controls for filtering and searching.</p>
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div>
+                        <h3>Upload JSON Logs</h3>
+                        <p>Click the <strong>"Upload"</strong> section at the top. Select your JSON log file and click the <strong>"Upload"</strong> button. The logs will be processed instantly and added to your dashboard.</p>
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div>
+                        <h3>View Your Logs</h3>
+                        <p>Logs are displayed in a table grouped by date. Each row shows: Timestamp, User, Company, Event, Level, and a View button for details.</p>
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <div>
+                        <h3>Filter & Search</h3>
+                        <p>Use the Filters section to narrow down logs by user name, company ID, log level, date range, or search in events/details.</p>
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">5</div>
+                    <div>
+                        <h3>View Details</h3>
+                        <p>Click the <strong>"View"</strong> button on any log row to see complete details including user action and additional data in a formatted table.</p>
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">6</div>
+                    <div>
+                        <h3>Export Logs</h3>
+                        <p>Click <strong>"Export"</strong> to download filtered logs (or all logs if no filter applied) as a JSON file.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="section" id="upload-json">
+                <h2><i class="fas fa-file-upload"></i> Uploading JSON Files</h2>
+                
+                <h3>Steps to Upload</h3>
+                <ol style="margin-left: 20px; margin-bottom: 20px;">
+                    <li>Prepare your JSON file with logs in the format specified below</li>
+                    <li>Go to the "Upload Logs" section at the top of the dashboard</li>
+                    <li>Click "Select JSON File" and choose your file</li>
+                    <li>Click the "Upload" button</li>
+                    <li>Wait for success message and logs will appear in the dashboard</li>
+                </ol>
+                
+                <div class="note">
+                    <p><strong>✓ Client-Side Processing:</strong> All uploads happen in your browser. No data is sent to any server. Logs are saved to your browser's local storage.</p>
+                </div>
+                
+                <h3>File Requirements</h3>
+                <ul style="margin-left: 20px; margin-bottom: 20px;">
+                    <li>File must be valid JSON format (.json extension)</li>
+                    <li>Can contain a single log object or an array of logs</li>
+                    <li>Each log must have at least a <code>timestamp</code> field</li>
+                    <li>Maximum file size depends on your browser's capabilities (typically several MB)</li>
+                </ul>
+                
+                <h3>Upload Status Messages</h3>
+                <p>After uploading, you'll see one of these messages:</p>
+                <table class="table-responsive">
+                    <tr>
+                        <th>Message</th>
+                        <th>Meaning</th>
+                    </tr>
+                    <tr>
+                        <td><span style="color: green;"><i class="fas fa-check-circle"></i> Successfully loaded X logs</span></td>
+                        <td>Upload successful! Logs are now in the dashboard.</td>
+                    </tr>
+                    <tr>
+                        <td><span style="color: orange;"><i class="fas fa-exclamation-triangle"></i> Please select a file</span></td>
+                        <td>No file was selected. Click to choose a file first.</td>
+                    </tr>
+                    <tr>
+                        <td><span style="color: red;"><i class="fas fa-times-circle"></i> Please select a valid JSON file</span></td>
+                        <td>File is not JSON format. Make sure it has .json extension.</td>
+                    </tr>
+                    <tr>
+                        <td><span style="color: red;"><i class="fas fa-times-circle"></i> Error parsing JSON</span></td>
+                        <td>JSON syntax error. Check your file for valid JSON.</td>
+                    </tr>
+                </table>
+            </div>
+            
+            <div class="section" id="json-format">
+                <h2><i class="fas fa-code"></i> JSON Format Specification</h2>
+                
+                <h3>Supported Log Structure</h3>
+                <p>The platform expects logs with the following structure:</p>
+                
+                <div class="json-example">
+[
+  {
+    "timestamp": "2025-11-18T11:55:52.441326Z",
+    "date": "2025-11-18",
+    "time": "12:55:52",
+    "user": {
+      "name": "john_doe"
+    },
+    "agency": {
+      "id": "18",
+      "name": "Company Name"
+    },
+    "event": "user_login_success",
+    "details": "User successfully logged in",
+    "level": "info",
+    "userAction": "LOGIN",
+    "additionalData": "{\"companyId\":\"18\",\"timestamp\":\"2025-11-18T12:55:58.446661\"}"
+  }
+]
+                </div>
+                
+                <h3>Field Descriptions</h3>
+                <table class="table-responsive">
+                    <tr>
+                        <th>Field</th>
+                        <th>Type</th>
+                        <th>Required</th>
+                        <th>Description</th>
+                    </tr>
+                    <tr>
+                        <td><code>timestamp</code></td>
+                        <td>ISO 8601 String</td>
+                        <td><span class="badge badge-required">Required</span></td>
+                        <td>ISO 8601 formatted datetime (e.g., 2025-11-18T11:55:52.441326Z)</td>
+                    </tr>
+                    <tr>
+                        <td><code>user</code></td>
+                        <td>Object</td>
+                        <td><span class="badge badge-optional">Optional</span></td>
+                        <td>Object containing user info. Nested field: <code>name</code> (string)</td>
+                    </tr>
+                    <tr>
+                        <td><code>agency</code></td>
+                        <td>Object</td>
+                        <td><span class="badge badge-optional">Optional</span></td>
+                        <td>Object containing agency info. Nested fields: <code>id</code> (string), <code>name</code> (string)</td>
+                    </tr>
+                    <tr>
+                        <td><code>event</code></td>
+                        <td>String</td>
+                        <td><span class="badge badge-required">Required</span></td>
+                        <td>Event type/name (e.g., "user_login_success")</td>
+                    </tr>
+                    <tr>
+                        <td><code>details</code></td>
+                        <td>String</td>
+                        <td><span class="badge badge-required">Required</span></td>
+                        <td>Event details/description</td>
+                    </tr>
+                    <tr>
+                        <td><code>level</code></td>
+                        <td>String</td>
+                        <td><span class="badge badge-required">Required</span></td>
+                        <td>Log level: "info", "warning", or "error"</td>
+                    </tr>
+                    <tr>
+                        <td><code>userAction</code></td>
+                        <td>String</td>
+                        <td><span class="badge badge-optional">Optional</span></td>
+                        <td>User action that triggered the log</td>
+                    </tr>
+                    <tr>
+                        <td><code>additionalData</code></td>
+                        <td>String (JSON) or Object</td>
+                        <td><span class="badge badge-optional">Optional</span></td>
+                        <td>Additional metadata. Can be JSON string or object. Displayed as table in modal.</td>
+                    </tr>
+                </table>
+                
+                <h3>Complete Example</h3>
+                <div class="json-example">
+[
+  {
+    "timestamp": "2025-11-18T11:55:52.441326Z",
+    "user": { "name": "Mauro.airgas" },
+    "agency": { "id": "18", "name": "4.0 Air Gas srl" },
+    "event": "ALLEGATI_CATEGORY_LOADED",
+    "details": "Category and required allegati loaded",
+    "level": "info",
+    "userAction": "LOAD_ALLEGATI_PAGE",
+    "additionalData": "{\"category\":\"CALDAIE\",\"requiredAllegati\":[\"ALL1\",\"RICEVUTA\"],\"idChiamata\":\"663428\"}"
+  },
+  {
+    "timestamp": "2025-11-18T11:56:05.132468Z",
+    "user": { "name": "unknown_user" },
+    "agency": { "id": "unknown_company", "name": "unknown_agency" },
+    "event": "api_error",
+    "details": "API request failed with status 500",
+    "level": "error"
+  }
+]
+                </div>
+                
+                <h3>Notes on Data Types</h3>
+                <ul style="margin-left: 20px; margin-bottom: 20px;">
+                    <li><strong>Timestamps:</strong> Must be ISO 8601 format for proper sorting and filtering</li>
+                    <li><strong>AdditionalData:</strong> If it's a JSON string, it will be parsed and displayed as a key-value table. If already an object, it will be used directly.</li>
+                    <li><strong>Log Level:</strong> Typically "info", "warning", or "error" - shown with colored badges</li>
+                    <li><strong>Fallbacks:</strong> If user/agency data is missing, system uses "unknown_user" and "unknown_company"</li>
+                </ul>
+            </div>
+            
+            <div class="section" id="api-reference">
+                <h2><i class="fas fa-plug"></i> API Reference</h2>
+                <p>The Logs Dashboard provides a simple REST API for retrieving, saving, and managing logs. All endpoints are relative to your dashboard URL.</p>
+                
+                <div class="note">
+                    <p><strong>Note:</strong> The platform is now optimized for client-side usage. file uploads happen entirely in the browser.(in this version the backend not yet deployed)</p>
+                </div>
+                
+                <h3>📋 GET /api/logs</h3>
+                <p>Retrieve all logs from the server (When backend is available)</p>
+                <div class="api-endpoint">
+                    <div><span class="method method-get">GET</span></div>
+                    <div>
+                        <code>/api/logs</code>
+                        <p style="margin: 10px 0 0 0; color: #666;">Fetch all logs stored on the backend</p>
+                    </div>
+                </div>
+                
+                <h4>Response Example:</h4>
+                <div class="json-example">
+[
+  {
+    "timestamp": "2025-11-18T11:55:52.441326Z",
+    "user": { "name": "john_doe" },
+    "agency": { "id": "18", "name": "Company" },
+    "event": "user_login_success",
+    "details": "User successfully logged in",
+    "level": "info"
+  }
+]
+                </div>
+                
+                <h3>📄 GET /api/logs/list</h3>
+                <p>List all log files on the server</p>
+                <div class="api-endpoint">
+                    <div><span class="method method-get">GET</span></div>
+                    <div>
+                        <code>/api/logs/list</code>
+                        <p style="margin: 10px 0 0 0; color: #666;">Get list of all .json log files</p>
+                    </div>
+                </div>
+                
+                <h4>Response Example:</h4>
+                <div class="json-example">
+{
+  "success": true,
+  "count": 3,
+  "files": [
+    "logs-2025-11-18.json",
+    "logs-2025-11-17.json",
+    "logs-2025-11-16.json"
+  ]
+}
+                </div>
+                
+                <h3>📄 GET /api/logs/:fileName</h3>
+                <p>Retrieve a specific log file by name</p>
+                <div class="api-endpoint">
+                    <div><span class="method method-get">GET</span></div>
+                    <div>
+                        <code>/api/logs/logs-2025-11-18.json</code>
+                        <p style="margin: 10px 0 0 0; color: #666;">Get specific log file contents</p>
+                    </div>
+                </div>
+                
+                <h4>Parameters:</h4>
+                <table class="table-responsive">
+                    <tr>
+                        <th>Parameter</th>
+                        <th>Type</th>
+                        <th>Description</th>
+                    </tr>
+                    <tr>
+                        <td><code>fileName</code></td>
+                        <td>string</td>
+                        <td>Name of the log file (without .json extension)</td>
+                    </tr>
+                </table>
+                
+                <h3>💾 POST /api/logs/save</h3>
+                <p>Save new logs to the server</p>
+                <div class="api-endpoint">
+                    <div><span class="method method-post">POST</span></div>
+                    <div>
+                        <code>/api/logs/save</code>
+                        <p style="margin: 10px 0 0 0; color: #666;">Save logs from external apps to the backend</p>
+                    </div>
+                </div>
+                
+                <h4>Request Body:</h4>
+                <div class="json-example">
+{
+  "logData": [
+    {
+      "timestamp": "2025-11-18T12:00:00Z",
+      "user": { "name": "app_user" },
+      "agency": { "id": "1", "name": "App Agency" },
+      "event": "action_completed",
+      "details": "Action completed successfully",
+      "level": "info"
+    }
+  ],
+  "fileName": "app-logs"
+}
+                </div>
+                
+                <h4>Required Fields:</h4>
+                <ul style="margin-left: 20px; margin-bottom: 20px;">
+                    <li><code>logData</code> - Array or single object of logs</li>
+                    <li><code>fileName</code> - Name for the log file (will save as .json)</li>
+                </ul>
+                
+                <h4>Response Example:</h4>
+                <div class="json-example">
+{
+  "success": true,
+  "message": "Log saved successfully",
+  "filePath": "/log/app-logs.json",
+  "fileName": "app-logs.json"
+}
+                </div>
+                
+                <h3>🗑️ DELETE /api/logs/:fileName</h3>
+                <p>Delete a specific log file</p>
+                <div class="api-endpoint">
+                    <div><span class="method method-delete">DELETE</span></div>
+                    <div>
+                        <code>/api/logs/old-logs</code>
+                        <p style="margin: 10px 0 0 0; color: #666;">Delete a log file from the backend</p>
+                    </div>
+                </div>
+                
+                <h4>Response Example:</h4>
+                <div class="json-example">
+{
+  "success": true,
+  "message": "Log file deleted successfully"
+}
+                </div>
+                
+                <h3>🧹 POST /api/logs/cleanup</h3>
+                <p>Manually trigger cleanup of logs older than 7 days</p>
+                <div class="api-endpoint">
+                    <div><span class="method method-post">POST</span></div>
+                    <div>
+                        <code>/api/logs/cleanup</code>
+                        <p style="margin: 10px 0 0 0; color: #666;">Clean up old log files (older than 7 days)</p>
+                    </div>
+                </div>
+                
+                <h4>Response Example:</h4>
+                <div class="json-example">
+{
+  "success": true,
+  "deletedCount": 2,
+  "deletedFiles": ["logs-2025-11-10.json", "logs-2025-11-09.json"],
+  "message": "Deleted 2 log files older than 7 days"
+}
+                </div>
+            </div>
+            
+            <div class="section" id="filtering">
+                <h2><i class="fas fa-filter"></i> Filtering & Search Guide</h2>
+                
+                <h3>Filter by User Name</h3>
+                <p>Enter a partial or full username to filter logs. The search is case-insensitive and matches partial strings.</p>
+                <ul style="margin-left: 20px; margin-bottom: 20px;">
+                    <li>Example: type "john" to find logs from "john_doe", "johnny", etc.</li>
+                    <li>Leave empty to show logs from all users</li>
+                </ul>
+                
+                <h3>Filter by Company ID</h3>
+                <p>Enter a company ID to filter logs from specific companies.</p>
+                <ul style="margin-left: 20px; margin-bottom: 20px;">
+                    <li>Example: type "18" to find all logs from company ID "18"</li>
+                    <li>Exact match or partial match supported</li>
+                </ul>
+                
+                <h3>Filter by Log Level</h3>
+                <p>Select a log level from dropdown to filter:</p>
+                <ul style="margin-left: 20px; margin-bottom: 20px;">
+                    <li><span style="background: rgba(76, 201, 240, 0.2); padding: 2px 8px; border-radius: 3px;"><strong>info</strong></span> - Information logs</li>
+                    <li><span style="background: rgba(248, 150, 30, 0.2); padding: 2px 8px; border-radius: 3px;"><strong>warning</strong></span> - Warning logs</li>
+                    <li><span style="background: rgba(247, 37, 133, 0.2); padding: 2px 8px; border-radius: 3px;"><strong>error</strong></span> - Error logs</li>
+                </ul>
+                
+                <h3>Filter by Date Range</h3>
+                <p>Select "From" and "To" dates to filter logs within a specific date range.</p>
+                <ul style="margin-left: 20px; margin-bottom: 20px;">
+                    <li>Click date picker to select dates</li>
+                    <li>Both dates are inclusive</li>
+                    <li>Leave empty to ignore date filtering</li>
+                </ul>
+                
+                <h3>Search in Event/Details</h3>
+                <p>Search for keywords in event names or log details. Press Enter or click Search button.</p>
+                <ul style="margin-left: 20px; margin-bottom: 20px;">
+                    <li>Case-insensitive search</li>
+                    <li>Searches both "event" and "details" fields</li>
+                    <li>Example: search "login" to find all login-related events</li>
+                </ul>
+                
+                <h3>Combine Multiple Filters</h3>
+                <p>All filters work together to narrow down results:</p>
+                <div class="note">
+                    <p>Example: Filter by user "john" + company "18" + level "error" + date range = shows only error logs from john in company 18 during that date range</p>
+                </div>
+                
+                <h3>Clear All Filters</h3>
+                <p>Click the "Clear" button to reset all filters and show all logs.</p>
+            </div>
+            
+            <!-- <div class="section" id="faq">
+                <h2><i class="fas fa-question-circle"></i> Frequently Asked Questions</h2>
+                
+                <h3>❓ Where is my data stored?</h3>
+                <p>When using the dashboard on Netlify or any static hosting:</p>
+                <ul style="margin-left: 20px; margin-bottom: 20px;">
+                    <li><strong>Client-side:</strong> Logs uploaded through the UI are stored in your browser's <code>localStorage</code></li>
+                    <li><strong>Persistent:</strong> Data persists across browser sessions until you clear it</li>
+                    <li><strong>Local only:</strong> No data is sent to any server</li>
+                </ul>
+                <p>When using with the Node.js backend, logs are also saved to the <code>/log</code> directory on the server.</p>
+                
+                <h3>❓ Can I upload large JSON files?</h3>
+                <p>Yes, the browser typically supports files up to several MB. The exact limit depends on:</p>
+                <ul style="margin-left: 20px; margin-bottom: 20px;">
+                    <li>Available browser memory</li>
+                    <li>Available localStorage space (usually 5-10MB per origin)</li>
+                    <li>Your system's capabilities</li>
+                </ul>
+                
+                <h3>❓ What happens if I reload the page?</h3>
+                <p>Your uploaded logs are saved in browser storage and will be restored when you reload. However:</p>
+                <ul style="margin-left: 20px; margin-bottom: 20px;">
+                    <li>If you clear browser data/cache, logs will be deleted</li>
+                    <li>Each browser/device stores its own copy of logs</li>
+                    <li>Logs don't sync between different browsers</li>
+                </ul>
+                
+                <h3>❓ How do I export my logs?</h3>
+                <p>Click the <strong>"Export"</strong> button to download logs as JSON:</p>
+                <ul style="margin-left: 20px; margin-bottom: 20px;">
+                    <li>Exports filtered logs if filters are applied</li>
+                    <li>Exports all logs if no filters are applied</li>
+                    <li>File is named: <code>logs-[date].json</code></li>
+                    <li>Opens browser download dialog</li>
+                </ul>
+                
+                <h3>❓ Why can't I see logs from other users?</h3>
+                <p>The dashboard shows logs only from the current browser session. To see shared logs:</p>
+                <ul style="margin-left: 20px; margin-bottom: 20px;">
+                    <li>Share the JSON log file with others</li>
+                    <li>They upload it to their dashboard</li>
+                    <li>Or use the backend API to retrieve shared logs</li>
+                </ul>
+                
+                <h3>❓ Can I delete logs from the dashboard?</h3>
+                <p>Currently, you can:</p>
+                <ul style="margin-left: 20px; margin-bottom: 20px;">
+                    <li>Clear all logs by clearing browser storage (Settings → Clear browsing data)</li>
+                    <li>Use the backend API <code>DELETE /api/logs/:fileName</code> to remove server files</li>
+                </ul>
+                
+                <h3>❓ What JSON format should I use?</h3>
+                <p>See the <strong>"JSON Format Specification"</strong> section for detailed format requirements. Minimum required fields:</p>
+                <ul style="margin-left: 20px; margin-bottom: 20px;">
+                    <li><code>timestamp</code> (ISO 8601 format)</li>
+                    <li><code>event</code> (string)</li>
+                    <li><code>details</code> (string)</li>
+                    <li><code>level</code> (info/warning/error)</li>
+                </ul>
+                
+                <h3>❓ Can I use this offline?</h3>
+                <p>Yes! The dashboard works completely offline when deployed on Netlify:</p>
+                <ul style="margin-left: 20px; margin-bottom: 20px;">
+                    <li>All processing happens in the browser</li>
+                    <li>No internet connection required after loading the page</li>
+                    <li>Logs are stored locally</li>
+                </ul>
+                
+                <h3>❓ How do I access logs from the backend API?</h3>
+                <p>If you have the Node.js backend running:</p>
+                <ul style="margin-left: 20px; margin-bottom: 20px;">
+                    <li>GET <code>/api/logs</code> - Retrieve all logs</li>
+                    <li>GET <code>/api/logs/list</code> - List all log files</li>
+                    <li>GET <code>/api/logs/:fileName</code> - Get specific file</li>
+                    <li>POST <code>/api/logs/save</code> - Save new logs</li>
+                </ul>
+                
+                <h3>❓ Are there limits on how many logs I can view?</h3>
+                <p>Practically, you can view thousands of logs. Performance depends on:</p>
+                <ul style="margin-left: 20px; margin-bottom: 20px;">
+                    <li>Browser memory</li>
+                    <li>Available localStorage (typically 5-10MB)</li>
+                    <li>Your device's capabilities</li>
+                </ul>
+                <p>Browsers typically handle 10,000+ logs without issues.</p>
+                
+                <h3>❓ Can I access data from a different device?</h3>
+                <p>No, browser storage is device-specific. To access logs from another device:</p>
+                <ul style="margin-left: 20px; margin-bottom: 20px;">
+                    <li>Export logs as JSON on the first device</li>
+                    <li>Transfer the JSON file to the second device</li>
+                    <li>Upload the JSON file in the dashboard</li>
+                </ul>
+                
+                <h3>❓ How often are old logs deleted?</h3>
+                <p>If using the backend:</p>
+                <ul style="margin-left: 20px; margin-bottom: 20px;">
+                    <li>Automatic cleanup runs every 24 hours</li>
+                    <li>Logs older than 7 days are deleted</li>
+                    <li>You can trigger manual cleanup with <code>POST /api/logs/cleanup</code></li>
+                </ul>
+                <p>Browser storage is not automatically cleaned; you control it.</p>
+                
+                <h3>❓ Can additionalData contain nested objects?</h3>
+                <p>Yes! additionalData supports complex structures:</p>
+                <div class="json-example">
+"additionalData": {
+  "call_id": "663428",
+  "nested": {
+    "key": "value",
+    "array": [1, 2, 3]
+  },
+  "categories": ["CALDAIE", "RISCALDAMENTO"]
+}
+                </div>
+                <p>They will be automatically formatted and displayed in the modal.</p>
+            </div> -->
+        </div>
+    </div>
+</body>
+</html>
